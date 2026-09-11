@@ -15,11 +15,15 @@ HTML_TEMPLATE = """
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Squad Ladder</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='8.png') }}">
+    
+    <!-- Sekme İkonu (Favicon) -->
+    <link rel="icon" type="image/png" href="/static/8.png">
+    <link rel="shortcut icon" type="image/png" href="/static/8.png">
+    
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0a1118;
+            background-color: #0b131e;
             color: #e3f2fd;
             margin: 0;
             padding: 20px;
@@ -31,39 +35,43 @@ HTML_TEMPLATE = """
         }
         .container {
             width: 100%;
-            max-width: 500px;
-            background: #101c28;
+            max-width: 520px;
+            background: #121f2d;
             padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-            border: 1px solid #1a2a3a;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            border: 1px solid #1e3246;
             text-align: center;
         }
         h1 {
-            color: #64b5f6;
-            margin-bottom: 20px;
-            font-size: 28px;
+            color: #42a5f5;
+            margin-bottom: 8px;
+            font-size: 30px;
             letter-spacing: 1px;
         }
-        h2 {
+        p.subtitle {
             color: #90caf9;
+            font-size: 14px;
+            margin-top: 0;
+            margin-bottom: 20px;
         }
         input, button {
             width: 100%;
             padding: 12px 16px;
             margin: 8px 0;
-            border-radius: 8px;
-            border: 1px solid #23384e;
+            border-radius: 10px;
+            border: 1px solid #233a52;
             box-sizing: border-box;
             font-size: 16px;
         }
         input {
-            background: #162434;
+            background: #182838;
             color: #ffffff;
             outline: none;
         }
         input:focus {
             border-color: #42a5f5;
+            box-shadow: 0 0 8px rgba(66, 165, 245, 0.4);
         }
         button {
             background: #1e88e5;
@@ -71,7 +79,7 @@ HTML_TEMPLATE = """
             font-weight: bold;
             cursor: pointer;
             border: none;
-            transition: background 0.2s, transform 0.1s;
+            transition: all 0.2s ease;
         }
         button:hover {
             background: #1565c0;
@@ -79,17 +87,47 @@ HTML_TEMPLATE = """
         button:active {
             transform: scale(0.98);
         }
-        .btn-secondary {
-            background: #0d47a1;
+        .btn-tv {
+            background: #1976d2;
+            font-size: 17px;
         }
-        .btn-secondary:hover {
+        .btn-tv:hover {
             background: #1565c0;
         }
-        .btn-start {
-            background: #0288d1;
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 15px 0;
         }
-        .btn-start:hover {
-            background: #0277bd;
+        .avatar-option {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            object-fit: cover;
+            background: #182838;
+            padding: 2px;
+            transition: 0.2s;
+        }
+        .avatar-option:hover {
+            transform: scale(1.08);
+        }
+        .avatar-option.selected {
+            border-color: #42a5f5;
+            box-shadow: 0 0 12px #42a5f5;
+        }
+        .color-picker-container {
+            margin: 15px 0;
+        }
+        .color-picker {
+            width: 60px;
+            height: 35px;
+            padding: 0;
+            border: none;
+            cursor: pointer;
+            background: transparent;
         }
         .hidden {
             display: none;
@@ -100,33 +138,64 @@ HTML_TEMPLATE = """
             text-align: left;
         }
         .player-list li {
-            padding: 10px 14px;
-            background: #182a3c;
-            margin-bottom: 6px;
-            border-radius: 6px;
-            border-left: 4px solid #42a5f5;
-            font-size: 15px;
+            padding: 12px 16px;
+            background: #182838;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-left: 5px solid #42a5f5;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .player-list img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🏆 Squad Ladder 🏆</h1>
+        <p class="subtitle">Televizyon için oda kur veya oyuncu olarak katıl!</p>
 
         <!-- Giriş Ekranı -->
         <div id="join-screen">
-            <input type="text" id="username" placeholder="Oyuncu Adı">
-            <input type="text" id="room-code" placeholder="Oda Kodu">
+            <button onclick="createRoom()" class="btn-tv">📺 Oda Oluştur (Televizyon Ekranı)</button>
+
+            <div style="margin: 20px 0; border-bottom: 1px solid #1e3246;"></div>
+            <h3>Oyuncu Girişi</h3>
+
+            <input type="text" id="username" placeholder="Adını Gir...">
+
+            <p style="margin-bottom: 5px; font-weight: bold;">Karakterini Seç:</p>
+            <div class="character-grid">
+                <img src="/static/1.png" class="avatar-option selected" onclick="selectAvatar(this, '1.png')">
+                <img src="/static/2.png" class="avatar-option" onclick="selectAvatar(this, '2.png')">
+                <img src="/static/3.png" class="avatar-option" onclick="selectAvatar(this, '3.png')">
+                <img src="/static/4.png" class="avatar-option" onclick="selectAvatar(this, '4.png')">
+                <img src="/static/5.png" class="avatar-option" onclick="selectAvatar(this, '5.png')">
+                <img src="/static/6.png" class="avatar-option" onclick="selectAvatar(this, '6.png')">
+                <img src="/static/7.png" class="avatar-option" onclick="selectAvatar(this, '7.png')">
+                <img src="/static/8.png" class="avatar-option" onclick="selectAvatar(this, '8.png')">
+                <img src="/static/9.png" class="avatar-option" onclick="selectAvatar(this, '9.png')">
+            </div>
+
+            <div class="color-picker-container">
+                <label for="color">İsim Rengi:</label><br>
+                <input type="color" id="color" class="color-picker" value="#42a5f5">
+            </div>
+
+            <input type="text" id="room-code" placeholder="Oda Kodu (Örn: A1B2)">
             <button onclick="joinRoom()">Odaya Katıl</button>
-            <button onclick="createRoom()" class="btn-secondary">Yeni Oda Oluştur</button>
         </div>
 
         <!-- Lobi Ekranı -->
         <div id="lobby-screen" class="hidden">
-            <h2>Oda Kodu: <span id="display-room-code" style="color:#64b5f6;"></span></h2>
+            <h2>Oda Kodu: <span id="display-room-code" style="color:#42a5f5;"></span></h2>
             <h3>Oyuncular:</h3>
             <ul id="player-list" class="player-list"></ul>
-            <button id="start-btn" onclick="startGame()" class="btn-start">Oyunu Başlat</button>
+            <button id="start-btn" onclick="startGame()" style="background:#0288d1; margin-top:15px;">Oyunu Başlat</button>
         </div>
 
         <!-- Oyun Ekranı -->
@@ -141,22 +210,32 @@ HTML_TEMPLATE = """
         const socket = io();
         let currentRoom = "";
         let username = "";
+        let selectedAvatar = "1.png";
+
+        function selectAvatar(element, avatar) {
+            document.querySelectorAll('.avatar-option').forEach(img => img.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedAvatar = avatar;
+        }
 
         function createRoom() {
-            username = document.getElementById('username').value.trim();
-            if (!username) return alert("Lütfen adınızı girin!");
-            
-            socket.emit('create_room', { username: username });
+            socket.emit('create_room', { host: true });
         }
 
         function joinRoom() {
             username = document.getElementById('username').value.trim();
             const room = document.getElementById('room-code').value.trim().toUpperCase();
-            
-            if (!username || !room) return alert("Ad ve Oda Kodu gerekli!");
-            
+            const userColor = document.getElementById('color').value;
+
+            if (!username || !room) return alert("Ad ve Oda Kodu girmelisin!");
+
             currentRoom = room;
-            socket.emit('join_room', { username: username, room: room });
+            socket.emit('join_room', {
+                username: username,
+                room: room,
+                avatar: selectedAvatar,
+                color: userColor
+            });
         }
 
         function startGame() {
@@ -185,12 +264,22 @@ HTML_TEMPLATE = """
             document.getElementById('join-screen').classList.add('hidden');
             document.getElementById('lobby-screen').classList.remove('hidden');
             document.getElementById('display-room-code').innerText = room;
-            
+
             const list = document.getElementById('player-list');
             list.innerHTML = '';
             players.forEach(p => {
                 const li = document.createElement('li');
-                li.innerText = p;
+                
+                const img = document.createElement('img');
+                img.src = '/static/' + (p.avatar || '1.png');
+                
+                const span = document.createElement('span');
+                span.innerText = p.username || p;
+                if (p.color) span.style.color = p.color;
+                span.style.fontWeight = 'bold';
+
+                li.appendChild(img);
+                li.appendChild(span);
                 list.appendChild(li);
             });
         }
@@ -206,17 +295,15 @@ def index():
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
-                               '8.png', mimetype='image/vnd.microsoft.icon')
+                               '8.png', mimetype='image/png')
 
 @socketio.on('create_room')
 def handle_create_room(data):
     import random, string
     room_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
-    username = data.get('username')
     
     rooms[room_code] = {
-        'host': username,
-        'players': [username]
+        'players': []
     }
     
     join_room(room_code)
@@ -226,9 +313,15 @@ def handle_create_room(data):
 def handle_join_room(data):
     room = data.get('room')
     username = data.get('username')
+    avatar = data.get('avatar', '1.png')
+    color = data.get('color', '#42a5f5')
     
     if room in rooms:
-        rooms[room]['players'].append(username)
+        rooms[room]['players'].append({
+            'username': username,
+            'avatar': avatar,
+            'color': color
+        })
         join_room(room)
         emit('update_players', {'players': rooms[room]['players']}, to=room)
     else:
