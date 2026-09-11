@@ -16,7 +16,6 @@ HTML_TEMPLATE = """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Squad Ladder</title>
     
-    <!-- Sekme İkonu (Favicon) -->
     <link rel="icon" type="image/png" href="/static/8.png">
     <link rel="shortcut icon" type="image/png" href="/static/8.png">
     
@@ -97,8 +96,9 @@ HTML_TEMPLATE = """
         .character-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            gap: 12px;
             margin: 15px 0;
+            justify-items: center;
         }
         .avatar-option {
             width: 60px;
@@ -107,7 +107,7 @@ HTML_TEMPLATE = """
             border: 3px solid transparent;
             cursor: pointer;
             object-fit: cover;
-            background: #182838;
+            background: #ffffff;
             padding: 2px;
             transition: 0.2s;
         }
@@ -118,6 +118,36 @@ HTML_TEMPLATE = """
             border-color: #42a5f5;
             box-shadow: 0 0 12px #42a5f5;
         }
+        
+        /* Canlı Önizleme Alanı */
+        .preview-box {
+            margin: 20px 0;
+            padding: 15px;
+            background: #182838;
+            border-radius: 14px;
+            border: 1px dashed #233a52;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .preview-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid #42a5f5;
+            object-fit: cover;
+            background: #ffffff;
+            padding: 4px;
+            box-shadow: 0 0 15px rgba(66, 165, 245, 0.5);
+            transition: transform 0.2s;
+        }
+        .preview-username {
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            word-break: break-all;
+        }
+
         .color-picker-container {
             margin: 15px 0;
         }
@@ -148,9 +178,11 @@ HTML_TEMPLATE = """
             gap: 12px;
         }
         .player-list img {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
+            background: #fff;
+            padding: 2px;
         }
     </style>
 </head>
@@ -166,7 +198,7 @@ HTML_TEMPLATE = """
             <div style="margin: 20px 0; border-bottom: 1px solid #1e3246;"></div>
             <h3>Oyuncu Girişi</h3>
 
-            <input type="text" id="username" placeholder="Adını Gir...">
+            <input type="text" id="username" placeholder="Adını Gir..." oninput="updatePreview()">
 
             <p style="margin-bottom: 5px; font-weight: bold;">Karakterini Seç:</p>
             <div class="character-grid">
@@ -183,7 +215,13 @@ HTML_TEMPLATE = """
 
             <div class="color-picker-container">
                 <label for="color">İsim Rengi:</label><br>
-                <input type="color" id="color" class="color-picker" value="#42a5f5">
+                <input type="color" id="color" class="color-picker" value="#42a5f5" oninput="updatePreview()">
+            </div>
+
+            <!-- Seçilen Karakter ve İsim Önizlemesi -->
+            <div class="preview-box">
+                <img id="preview-img" src="/static/1.png" class="preview-avatar">
+                <div id="preview-name" class="preview-username" style="color: #42a5f5;">Oyuncu Adı</div>
             </div>
 
             <input type="text" id="room-code" placeholder="Oda Kodu (Örn: A1B2)">
@@ -216,6 +254,18 @@ HTML_TEMPLATE = """
             document.querySelectorAll('.avatar-option').forEach(img => img.classList.remove('selected'));
             element.classList.add('selected');
             selectedAvatar = avatar;
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const nameInput = document.getElementById('username').value.trim();
+            const colorInput = document.getElementById('color').value;
+            
+            document.getElementById('preview-img').src = '/static/' + selectedAvatar;
+            
+            const nameDisplay = document.getElementById('preview-name');
+            nameDisplay.innerText = nameInput ? nameInput : "Oyuncu Adı";
+            nameDisplay.style.color = colorInput;
         }
 
         function createRoom() {
@@ -275,7 +325,7 @@ HTML_TEMPLATE = """
                 
                 const span = document.createElement('span');
                 span.innerText = p.username || p;
-                if (p.color) span.style.color = p.color;
+                span.style.color = p.color ? p.color : '#42a5f5';
                 span.style.fontWeight = 'bold';
 
                 li.appendChild(img);
