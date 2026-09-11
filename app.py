@@ -16,12 +16,13 @@ HTML_TEMPLATE = """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Squad Ladder</title>
     
+    <!-- Sekme İkonu (Favicon) -->
     <link rel="icon" type="image/png" href="/static/8.png">
     <link rel="shortcut icon" type="image/png" href="/static/8.png">
     
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif;
             background-color: #0b131e;
             color: #e3f2fd;
             margin: 0;
@@ -47,6 +48,7 @@ HTML_TEMPLATE = """
             margin-bottom: 8px;
             font-size: 30px;
             letter-spacing: 1px;
+            font-family: 'Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
         p.subtitle {
             color: #90caf9;
@@ -62,6 +64,7 @@ HTML_TEMPLATE = """
             border: 1px solid #233a52;
             box-sizing: border-box;
             font-size: 16px;
+            font-family: 'Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
         input {
             background: #182838;
@@ -146,6 +149,7 @@ HTML_TEMPLATE = """
             font-size: 20px;
             font-weight: bold;
             word-break: break-all;
+            font-family: 'Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
 
         .color-picker-container {
@@ -176,6 +180,7 @@ HTML_TEMPLATE = """
             display: flex;
             align-items: center;
             gap: 12px;
+            font-family: 'Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
         .player-list img {
             width: 40px;
